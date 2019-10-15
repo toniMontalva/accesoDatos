@@ -21,9 +21,11 @@ namespace PlaceMyBetAPI.Controllers
         }
 
         // GET: api/Mercados/5
-        public List<Mercado> Get(int id)
+        public Mercado Get(int id)
         {
-            return null;
+            var repo = new MercadosRepository();
+            Mercado mercado = repo.BuscarMercadoPorID(id);
+            return mercado;
         }
 
         // POST: api/Mercados
