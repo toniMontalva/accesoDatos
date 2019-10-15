@@ -31,6 +31,8 @@ namespace PlaceMyBetAPI.Controllers
         {
             var repo = new ApuestasRepository();
             repo.Save(apuesta);
+            var repoUpdate = new MercadosRepository();
+            repoUpdate.UpdateMercadoExistente(apuesta.MercadoId, apuesta);
         }
 
         // PUT: api/Apuestas/5

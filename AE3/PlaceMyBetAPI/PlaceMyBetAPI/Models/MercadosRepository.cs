@@ -95,11 +95,11 @@ namespace PlaceMyBetAPI.Models
             {
                 con.Open();
                 MySqlDataReader res = command.ExecuteReader();
-  
+
                 Mercado mer = null;
                 while (res.Read())
                 {
-                    Debug.WriteLine("Recuperado: " + res.GetInt32(0) + " " + res.GetInt32(1) + " " + res.GetDouble(2) + " " + res.GetDouble(3) + " " + res.GetDouble(4) + " " + res.GetDouble(5) + " " + res.GetDouble(6));
+                    Debug.WriteLine("Recuperado: " + res.GetInt32(0) + " " + res.GetInt32(1) + " " + res.GetDouble(2) + " " + res.GetDouble(3) + " " + Double.Parse(res.GetString(6)) + " " + res.GetDouble(4) + " " + res.GetDouble(5));
                     mer = new Mercado(res.GetInt32(0), res.GetInt32(1), res.GetDouble(2), res.GetDouble(3), Double.Parse(res.GetString(6)), res.GetDouble(4), res.GetDouble(5));
                 }
 
@@ -121,12 +121,13 @@ namespace PlaceMyBetAPI.Models
         internal Mercado RecalculoCuotas(Mercado mercado, Apuesta apuesta)
         {
             double probabilidadOver = 0.0;
-            double probabilidadUnder = 0.0;         
+            double probabilidadUnder = 0.0;
             string tipoApuesta = apuesta.Tipo.ToLower();
-            if(tipoApuesta.Contains("over"))
+            if (tipoApuesta.Contains("over"))
             {
                 mercado.DineroOver += apuesta.Cantidad;
-            } else
+            }
+            else
             {
                 mercado.DineroUnder += apuesta.Cantidad;
             }
@@ -147,16 +148,27 @@ namespace PlaceMyBetAPI.Models
             Mercado mercado = QueMercadoEsLaApuesta(apuesta);
             mercado = RecalculoCuotas(mercado, apuesta);
 
-            command.CommandText = "UPDATE acceso_datos.mercados SET id=@id, id_evento=@id_evento, cuota_over=@cuota_over, cuota_under=@cuota_under, dinero_over=@dinero_over," +
+            command.CommandText = "UPDATE mercados SET id=@id, id_evento=@id_evento, cuota_over=@cuota_over, cuota_under=@cuota_under, dinero_over=@dinero_over," +
                 "dinero_under=@dinero_under, tipo_mercado=@tipo_mercado WHERE id=@id";
-            
+
             command.Parameters.AddWithValue("@id", mercado.MercadoId);
             command.Parameters.AddWithValue("@id_evento", mercado.EventoId);
             command.Parameters.AddWithValue("@cuota_over", mercado.CuotaOver);
             command.Parameters.AddWithValue("@cuota_under", mercado.CuotaUnder);
             command.Parameters.AddWithValue("@dinero_over", mercado.DineroOver);
             command.Parameters.AddWithValue("@dinero_under", mercado.DineroUnder);
-            command.Parameters.AddWithValue("@tipo_mercado", mercado.TipoMercado);
+            command.Parameters.AddWithValue("@tipo_mercado", mercado.TipoMercado.ToString());
+
+            try
+            {
+                con.Open();
+                MySqlDataReader res = command.ExecuteReader();
+                con.Close();
+            }
+            catch (MySqlException)
+            {
+                Debug.WriteLine("Se ha producido un error de conexión.");
+            }
         }
     }
 }

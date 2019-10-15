@@ -123,10 +123,10 @@ namespace PlaceMyBetAPI.Models
                 Debug.WriteLine("Se ha producido un error de conexión");
             }
 
-            UpdateMercadoExistente(apuesta.MercadoId, apuesta);
+            //UpdateMercadoExistente(apuesta.MercadoId, apuesta);
         }
 
-        internal Mercado BuscarMercadoPorID(int id)
+        /*internal Mercado BuscarMercadoPorID(int id)
         {
             MySqlConnection con = Connect();
             MySqlCommand command = con.CreateCommand();
@@ -211,6 +211,6 @@ namespace PlaceMyBetAPI.Models
             {
                 Debug.WriteLine("Se ha producido un error de conexión.");
             }
-        }
+        }*/
     }
 }
